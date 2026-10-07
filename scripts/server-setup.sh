@@ -4,7 +4,7 @@
 #
 # Run on a fresh Ubuntu 24.04 EC2 instance, as the "ubuntu" user:
 #
-#   curl -fsSLo setup.sh https://raw.githubusercontent.com/Tankthesigma/mohan-lab/main/scripts/server-setup.sh
+#   curl -fsSLo setup.sh https://raw.githubusercontent.com/thanojaila/mohan-lab/main/scripts/server-setup.sh
 #   bash setup.sh
 #
 # Safe to re-run: every step checks whether it is already done.
@@ -16,7 +16,7 @@
 
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-https://github.com/Tankthesigma/mohan-lab.git}"
+REPO_URL="${REPO_URL:-https://github.com/thanojaila/mohan-lab.git}"
 DOMAIN="${DOMAIN:-mohanlab.bme.uh.edu}"
 APP_DIR="${APP_DIR:-$HOME/mohan-lab}"
 APP_PORT="${APP_PORT:-3000}"

@@ -42,7 +42,7 @@ Written so it can be repeated by someone else (or by you in a year).
 ## Before you start
 
 - [ ] An AWS account you can log into, with billing set up.
-- [ ] **Write access to the GitHub repo, and admin access to add Actions secrets** (Settings → Secrets). The repo currently lives under the `Tankthesigma` GitHub account. For handover, consider moving it to a lab-owned GitHub organization (Settings → Danger zone → Transfer) so it does not depend on one person's account.
+- [ ] **Write access to the GitHub repo, and admin access to add Actions secrets** (Settings → Secrets). The site is hosted from the `thanojaila` GitHub account's fork of the original `Tankthesigma/mohan-lab` repo (write access to the original was unavailable at setup time). For handover, consider moving it to a lab-owned GitHub organization (Settings → Danger zone → Transfer) so it does not depend on one person's account.
 - [ ] Node 22.13+ on your Mac (`node -v`).
 
 ---
@@ -117,7 +117,7 @@ ssh -i ~/Downloads/mohan-lab-key.pem ubuntu@ELASTIC_IP
 (Type `yes` the first time.) You are now on the server. Run:
 
 ```bash
-curl -fsSLo setup.sh https://raw.githubusercontent.com/Tankthesigma/mohan-lab/main/scripts/server-setup.sh
+curl -fsSLo setup.sh https://raw.githubusercontent.com/thanojaila/mohan-lab/main/scripts/server-setup.sh
 bash setup.sh
 ```
 
