@@ -36,7 +36,7 @@ wait_healthy() {
 # Put the given commit live: checkout, install, build, restart, health-check.
 release() {
   git reset --hard --quiet "$1"            || return 1
-  npm ci --no-audit --no-fund              || return 1
+  { npm ci --no-audit --no-fund || npm install --no-audit --no-fund; } || return 1
   npm run build                            || return 1
   sudo systemctl restart "$SERVICE"        || return 1
   wait_healthy                             || return 1

@@ -82,7 +82,7 @@ fi
 # ---------------------------------------------------------------------------
 step "6/9  Building the website (this takes a few minutes)"
 cd "$APP_DIR"
-npm ci --no-audit --no-fund
+npm ci --no-audit --no-fund || npm install --no-audit --no-fund
 npm run build
 
 # ---------------------------------------------------------------------------
