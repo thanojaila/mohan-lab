@@ -1,0 +1,71 @@
+name: Deploy website
+
+# Every change saved to the "main" branch is checked and then published
+# to the AWS server automatically. See docs/updating-the-website.md.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Emergency go-back: commit ID to publish (leave empty for the latest main)"
+        required: false
+        default: ""
+
+# Never run two deploys at the same time.
+concurrency:
+  group: deploy-website
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Check the code
+    # Manual runs (emergency go-back) skip the checks.
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  deploy:
+    name: Publish to AWS
+    needs: [check]
+    if: ${{ always() && (needs.check.result == 'success' || needs.check.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Deploy over SSH
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REF: ${{ inputs.ref }}
+        run: |
+          if [ -z "$EC2_HOST" ] || [ -z "$EC2_SSH_KEY" ]; then
+            echo "::warning::EC2_HOST / EC2_SSH_KEY secrets are not set yet - skipping the deploy."
+            exit 0
+          fi
+
+          if [ -n "$REF" ] && ! [[ "$REF" =~ ^[0-9a-fA-F]{7,40}$ ]]; then
+            echo "::error::The commit ID must be 7-40 letters/numbers (0-9, a-f)."
+            exit 1
+          fi
+
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -T 10 -H "$EC2_HOST" >> ~/.ssh/known_hosts
+
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o ServerAliveInterval=30 \
+            "ubuntu@${EC2_HOST}" "bash \$HOME/mohan-lab/scripts/deploy.sh ${REF}"
