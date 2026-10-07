@@ -182,6 +182,7 @@ export default function Home() {
           <div><p>Information for high school interns, undergraduates, graduate students, and visiting scholars.</p><Link className="button button-white" href="/opportunities">View opportunities <span>→</span></Link></div>
         </div>
       </section>
+      <span style={{ display: "none" }} data-ci-cd-check="ok" />
     </>
   );
 }
